@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/ovirt-engine/webadmin/theme/00-ovirt.brand/bundled/jquery/jquery.min.js"></script>
+    <script type='text/javascript'>
+      var api = parent.pluginApi('resources-control');
+      var VM_LIMIT_PLUGIN_MESSAGE_DELIM = ':';
+      var VM_LIMIT_PLUGIN_MESSAGE_PREFIX = 'vm-limit-plugin';
+      var url = api.engineBaseUrl();
+      // Get runtime plugin configuration, i.e. custom configuration (if any)
+      // merged on top of default configuration (if any)
+      var config = api.configObject();
+
+      function getVmList(f, apiEntryPoint) {
+        var func = f;
+        var vms = new Array();
+        var vm_name = new Array();
+        var vmsUrl = apiEntryPoint + "/vms?search=status=up&follow=host";
+        var hostsUrl, xml, xmlDoc, host;
+        jQuery.ajax({
+          type: "GET",
+          dataType: "json",
+          url: vmsUrl,
+          success: function(data) {
+            for (var index in data.vm) {
+              vms.push({
+                name: data.vm[index].name,
+                host: data.vm[index].host.name,
+              });
+              vm_name.push(data.vm[index].name);
+            }
+            formWindow && formWindow.getVmList(vms, vm_name);
+          }
+        });
+      }
+
+      api.options({
+        // Configure source origin(s), i.e. protocol://domain:port
+        // from which HTML5 message events will be accepted
+        allowedMessageOrigins: config.allowedOrigins
+      });
+
+      api.register({
+        UiInit: function(){
+          api.addSecondaryMenuPlace('compute', 'Resources Control', 'resourcesControl',
+            '/ovirt-ui-plugins/resources-control/resources-control-resources/index.html',
+            {
+              priority: 1, // negative priority will be the top menu item.
+            }
+          );
+        },
+        MessageReceived: function(data, sourceWindow) {
+          if (typeof data !== 'string') {
+              return;
+          }
+
+          var tuple = data.split(VM_LIMIT_PLUGIN_MESSAGE_DELIM);
+            if (tuple[0] !== VM_LIMIT_PLUGIN_MESSAGE_PREFIX) {
+                return;
+          }
+
+          switch (tuple[1]) {
+            case 'getVmList':
+              formWindow = sourceWindow;
+              getVmList(tuple[1], config.apiEntryPoint);
+              break;
+          }
+        }
+      });
+      api.ready();
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{
+     // Unique name of the plugin
+     "name": "resources-control",
+
+     // URL of plugin host page that bootstraps plugin code
+     // This URL maps to $ENGINE_USR/ui-plugins/vm-limit-resource/plugin.html
+     "url": "plugin/resources-control/plugin.html",
+
+     // Path to plugin resource files relative to descriptor
+     // This path maps to $ENGINE_USR/ui-plugins/vm-limit-resources
+     "resourcePath": "resources-control-resources",
+
+     // Default configuration associated with the plugin
+     "config": {
+        "allowedOrigins": ["https://127.0.0.1"],
+        "apiEntryPoint": "https://127.0.0.1/ovirt-engine/api"
+     }
+}
