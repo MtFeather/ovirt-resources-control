@@ -1,6 +1,5 @@
 <?php
 function getVmList() {
-  require('require/ovirt_config.php');
   require('require/dbconfig.php');
   $requestData = $_REQUEST;
   $vm_names = $_POST["vm_names"];
