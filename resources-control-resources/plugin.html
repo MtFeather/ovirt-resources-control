@@ -11,8 +11,7 @@
       // merged on top of default configuration (if any)
       var config = api.configObject();
 
-      function getVmList(f, apiEntryPoint) {
-        var func = f;
+      function getVmList(apiEntryPoint) {
         var vms = new Array();
         var vm_name = new Array();
         var vmsUrl = apiEntryPoint + "/vms?search=status=up&follow=host";
@@ -21,6 +20,7 @@
           type: "GET",
           dataType: "json",
           url: vmsUrl,
+          headers: {'Authorization': 'Bearer ' + api.ssoToken()},
           success: function(data) {
             for (var index in data.vm) {
               vms.push({
@@ -62,7 +62,7 @@
           switch (tuple[1]) {
             case 'getVmList':
               formWindow = sourceWindow;
-              getVmList(tuple[1], config.apiEntryPoint);
+              getVmList(config.apiEntryPoint);
               break;
           }
         }
