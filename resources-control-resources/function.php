@@ -82,10 +82,10 @@ function modPolicys() {
     $conn = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     if ($resources_policy == 0) { 
-      shell_exec("sudo /bin/sh ../resources-control-script/stop.sh");
+      shell_exec("/usr/bin/sudo ../resources-control-script/start_stop.sh stop");
       $stmt = $conn->prepare("UPDATE resources_policy SET resources_policy=$resources_policy");
     } else {
-      shell_exec("/bin/sudo /bin/sh ../resources-control-script/start.sh $schedule");
+      shell_exec("/usr/bin/sudo ../resources-control-script/start_stop.sh start $schedule");
       $stmt = $conn->prepare("UPDATE resources_policy SET resources_policy=$resources_policy, schedule=$schedule, cpu_utilization=$cpu_utilization, iscsi_utilization=$iscsi_utilization, iscsi_write=$iscsi_write, iscsi_read=$iscsi_read,vm_max_disk_write=$vm_max_disk_write ,vm_max_disk_read=$vm_max_disk_read , vm_limit_disk_write=$vm_limit_disk_write, vm_limit_disk_read=$vm_limit_disk_read, net_utilization=$net_utilization, net_rx=$net_rx, net_tx=$net_tx, vm_net_rx=$vm_net_rx, vm_net_tx=$vm_net_tx");
     }
     $stmt->execute();
