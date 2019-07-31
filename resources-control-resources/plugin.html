@@ -34,6 +34,14 @@
         });
       }
 
+      function startVM(id) {
+       jQuery.ajax({
+          type: "POST",
+          url: "/ovirt-ui-plugins/resources-control/resources-control-resources/function.php?f=startVM", 
+          data: { id: id }
+        });
+      }
+
       api.options({
         // Configure source origin(s), i.e. protocol://domain:port
         // from which HTML5 message events will be accepted
@@ -48,6 +56,29 @@
               priority: 1, // negative priority will be the top menu item.
             }
           );
+          api.addMenuPlaceActionButton('VirtualMachine', 'Start VM', {
+            onClick: function() {
+              var vms_id = new Array();
+              var selectedVM = arguments;
+              for(var i in selectedVM) {
+                if (selectedVM[i].status == "Down") {
+                  vms_id.push(selectedVM[i].id);
+                }
+              }
+              if (vms_id.length > 0) {
+                startVM(vms_id);
+              }
+            },
+            isEnabled: function() {
+              if (arguments.length == 0) {
+                return false;
+              } else {
+                for (var i=0; i < arguments.length; i++) {
+                    return arguments[i].status === "Down";
+                }
+              }
+            }
+          });
         },
         MessageReceived: function(data, sourceWindow) {
           if (typeof data !== 'string') {

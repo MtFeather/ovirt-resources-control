@@ -97,6 +97,17 @@ function modPolicys() {
   $conn = null;
 }
 
+function startVM() {
+  $vm_id = $_POST["id"];
+  if (!empty($vm_id)){
+    chdir('../resources-control-script');
+    foreach ($vm_id as $id) {
+      exec("/usr/bin/sudo ./vm_start_load_balancing.sh $id");
+    }
+    echo "ok";
+  }
+}
+
 if (function_exists($_GET['f'])) {
   $_GET['f']();
 }
